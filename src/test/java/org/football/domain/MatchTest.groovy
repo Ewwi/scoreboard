@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 class MatchTest extends Specification {
 
-    def "Should update score correctly"() {
+    def "Should update score for one team only"() {
         given:
         def match = new Match(
                 new Team("Poland", 0),
@@ -25,7 +25,7 @@ class MatchTest extends Specification {
         where:
         homeScore | awayScore | expectedHomeScore | expectedAwayScore
         0         | 1         | 0                 | 1
-        10        | 15        | 10                | 15
+        15        | 0         | 15                | 0
     }
 
     @Unroll
