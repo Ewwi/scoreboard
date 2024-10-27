@@ -1,5 +1,6 @@
 package org.football.domain
 
+import org.football.exception.AmbiguousMatchException
 import org.football.exception.MatchNotFoundException
 import spock.lang.Specification
 
@@ -33,21 +34,26 @@ class ScoreBoardTest extends Specification {
         given:
         def scoreBoard = new ScoreBoard(new ArrayList<>())
         scoreBoard.startNewMatch(polandVsGermany)
+        scoreBoard.startNewMatch(italyVsSpain)
 
         when:
         scoreBoard.startNewMatch(new Match(homeTeam, awayTeam, LocalDateTime.now()))
 
         then:
-        def exception = thrown(IllegalArgumentException)
-        exception.message == "Cannot start new match for team ${exceptionVariable}." +
-                " Team needs to finish first match in order to participate in another."
+        def exception = thrown(AmbiguousMatchException)
+        exception.message == "Multiple matches found. Matches: ${exceptionVariable}"
 
         where:
         homeTeam               | awayTeam               | exceptionVariable
-        new Team("Poland", 0)  | new Team("Italy", 0)   | "Poland"
-        new Team("Italy", 0)   | new Team("Poland", 0)  | "Poland"
-        new Team("Germany", 0) | new Team("Italy", 0)   | "Germany"
-        new Team("Italy", 0)   | new Team("Germany", 0) | "Germany"
+        new Team("Poland", 0)  | new Team("France", 0)  | "Poland vs Germany"
+        new Team("Germany", 0) | new Team("France", 0)  | "Poland vs Germany"
+        new Team("France", 0)  | new Team("Germany", 0) | "Poland vs Germany"
+        new Team("France", 0)  | new Team("Poland", 0)  | "Poland vs Germany"
+        new Team("Italy", 0)   | new Team("France", 0)  | "Italy vs Spain"
+        new Team("France", 0)  | new Team("Italy", 0)   | "Italy vs Spain"
+        new Team("Spain", 0)   | new Team("France", 0)  | "Italy vs Spain"
+        new Team("France", 0)  | new Team("Spain", 0)   | "Italy vs Spain"
+
     }
 
     def "should finish match and remove it from ongoing matches"() {
@@ -66,22 +72,42 @@ class ScoreBoardTest extends Specification {
         scoreBoard.getMatchesInProgress().get(0).homeTeam.name == "Italy"
     }
 
-    def "should find match by home team name"() {
+    def "should throw exception when trying to remove not existing match"() {
+        given:
+        def scoreBoard = new ScoreBoard(new ArrayList<>())
+
+        and:
+        scoreBoard.startNewMatch(polandVsGermany)
+
+        when:
+        scoreBoard.finishMatch(teamName)
+
+        then:
+        def exception = thrown(MatchNotFoundException)
+        exception.message == "Match not found for team: ${teamName}"
+
+        where:
+        teamName << ["123", "Italy"]
+    }
+
+    def "should find match by team name"() {
         given:
         def scoreBoard = new ScoreBoard(new ArrayList<>())
         scoreBoard.startNewMatch(polandVsGermany)
         scoreBoard.startNewMatch(italyVsSpain)
 
         when:
-        def actual = scoreBoard.findMatch("Poland")
+        def actual = scoreBoard.findMatch(homeTeamName)
 
         then:
-        actual == expectedTeam
+        actual.get() == expectedTeam
 
         where:
         homeTeamName | expectedTeam
         "Poland"     | polandVsGermany
+        "Germany"    | polandVsGermany
         "Italy"      | italyVsSpain
+        "Spain"      | italyVsSpain
         "poland"     | polandVsGermany
         "italy"      | italyVsSpain
         "iTalY"      | italyVsSpain
@@ -104,9 +130,9 @@ class ScoreBoardTest extends Specification {
         where:
         invalidName | expectedExceptionClass   | exceptionMessage
         ""          | IllegalArgumentException | "Team name cannot be null or blank"
+        "   "       | IllegalArgumentException | "Team name cannot be null or blank"
+        "       "   | IllegalArgumentException | "Team name cannot be null or blank"
         null        | IllegalArgumentException | "Team name cannot be null or blank"
-        "123"       | MatchNotFoundException   | "Match not found for team: 123"
-        "Portugal"  | MatchNotFoundException   | "Match not found for team: Portugal"
     }
 
     def "should get a sorted summary of matches in progress"() {

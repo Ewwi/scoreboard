@@ -52,4 +52,20 @@ class MatchTest extends Specification {
         11        | 11        | "Scores for both home and away teams cannot be changed simultaneously"
         9         | 9         | "Score cannot be decreased"
     }
+
+    def "should return formatted score information for home and away teams"() {
+        given:
+        def homeTeam = new Team("Poland", homeScore)
+        def awayTeam = new Team("Germany", awayScore)
+        def match = new Match(homeTeam, awayTeam, LocalDateTime.now())
+
+        expect:
+        match.getCurrentScore() == expectedScore
+
+        where:
+        homeScore | awayScore | expectedScore
+        0         | 0         | "Poland 0 - 0 Germany"
+        1         | 2         | "Poland 1 - 2 Germany"
+        3         | 4         | "Poland 3 - 4 Germany"
+    }
 }

@@ -15,7 +15,7 @@ class ScoreBoardE2ETest extends Specification {
                 LocalDateTime.now())
         scoreBoard.startNewMatch(spainVsGermany)
 
-        and: "Start new Poland vs Italy match after Spain vs Germany match" // same score, later game
+        and: "Start new Poland vs Italy match after Spain vs Germany match"
         def polandVsItaly = new Match(
                 new Team("Poland", 0),
                 new Team("Italy", 0),
@@ -30,21 +30,21 @@ class ScoreBoardE2ETest extends Specification {
         scoreBoard.startNewMatch(franceVsNorway)
 
         when: "Simulate scoring"
-        scoreBoard.findMatch("Spain").updateScore(1,0)
-        scoreBoard.findMatch("Spain").updateScore(2,0)
-        scoreBoard.findMatch("Spain").updateScore(3,0)
-        scoreBoard.findMatch("Spain").updateScore(3,1)
-        scoreBoard.findMatch("Spain").updateScore(3,2)
+        scoreBoard.findMatch("Spain").get().updateScore(1,0)
+        scoreBoard.findMatch("Spain").get().updateScore(2,0)
+        scoreBoard.findMatch("Spain").get().updateScore(3,0)
+        scoreBoard.findMatch("Spain").get().updateScore(3,1)
+        scoreBoard.findMatch("Spain").get().updateScore(3,2)
 
-        scoreBoard.findMatch("Poland").updateScore(1, 0)
-        scoreBoard.findMatch("Poland").updateScore(2, 0)
-        scoreBoard.findMatch("Poland").updateScore(3, 0)
-        scoreBoard.findMatch("Poland").updateScore(4, 0)
-        scoreBoard.findMatch("Poland").updateScore(4, 1)
+        scoreBoard.findMatch("Poland").get().updateScore(1, 0)
+        scoreBoard.findMatch("Poland").get().updateScore(2, 0)
+        scoreBoard.findMatch("Poland").get().updateScore(3, 0)
+        scoreBoard.findMatch("Poland").get().updateScore(4, 0)
+        scoreBoard.findMatch("Poland").get().updateScore(4, 1)
 
-        scoreBoard.findMatch("France").updateScore(1, 0)
-        scoreBoard.findMatch("France").updateScore(2, 0)
-        scoreBoard.findMatch("France").updateScore(2, 1)
+        scoreBoard.findMatch("France").get().updateScore(1, 0)
+        scoreBoard.findMatch("France").get().updateScore(2, 0)
+        scoreBoard.findMatch("France").get().updateScore(2, 1)
 
         then:
         "Get a summary of matches ordered by their total score. " +
@@ -57,7 +57,7 @@ class ScoreBoardE2ETest extends Specification {
         ]
 
         when: "Finishing the Poland vs Italy match"
-        scoreBoard.finishMatch(polandVsItaly)
+        scoreBoard.finishMatch("Poland")
 
         then: "Ongoing matches should exclude the finished match"
         List<String> ongoingMatches = scoreBoard.getMatchSummary()

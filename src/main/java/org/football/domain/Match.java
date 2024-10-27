@@ -22,6 +22,11 @@ public class Match {
         awayTeam.setScore(awayTeamPoints);
     }
 
+    public String getCurrentScore() {
+        return String.format("%s %d - %d %s",
+                homeTeam.getName(), homeTeam.getScore(), awayTeam.getScore(), awayTeam.getName());
+    }
+
     private void validateScorePoints(Team team, int points) {
         if (points < 0) {
             throw new IllegalArgumentException("Points must be zero or positive");
