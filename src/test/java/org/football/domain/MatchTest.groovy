@@ -48,8 +48,8 @@ class MatchTest extends Specification {
         homeScore | awayScore | exceptionMessage
         -1        | 10        | "Points must be zero or positive"
         10        | -1        | "Points must be zero or positive"
-        10        | 10        | "No changes detected"
-        11        | 11        | "Scores cannot be changed simultaneously"
-        9         | 9         | "Points can't be lower than existing score"
+        10        | 10        | "No score changes detected for both teams"
+        11        | 11        | "Scores for both home and away teams cannot be changed simultaneously"
+        9         | 9         | "Score cannot be decreased"
     }
 }
