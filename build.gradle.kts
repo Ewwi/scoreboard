@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "org.football"
-version = "17"
+version = "21"
 
 repositories {
     mavenCentral()
