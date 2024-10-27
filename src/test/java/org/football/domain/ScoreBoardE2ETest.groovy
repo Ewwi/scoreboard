@@ -30,21 +30,21 @@ class ScoreBoardE2ETest extends Specification {
         scoreBoard.startNewMatch(franceVsNorway)
 
         when: "Simulate scoring"
-        spainVsGermany.updateScore(1, 0)
-        spainVsGermany.updateScore(2, 0)
-        spainVsGermany.updateScore(3, 0)
-        spainVsGermany.updateScore(3, 1)
-        spainVsGermany.updateScore(3, 2)
+        scoreBoard.findMatch("Spain").updateScore(1,0)
+        scoreBoard.findMatch("Spain").updateScore(2,0)
+        scoreBoard.findMatch("Spain").updateScore(3,0)
+        scoreBoard.findMatch("Spain").updateScore(3,1)
+        scoreBoard.findMatch("Spain").updateScore(3,2)
 
-        polandVsItaly.updateScore(1, 0)
-        polandVsItaly.updateScore(2, 0)
-        polandVsItaly.updateScore(3, 0)
-        polandVsItaly.updateScore(4, 0)
-        polandVsItaly.updateScore(4, 1)
+        scoreBoard.findMatch("Poland").updateScore(1, 0)
+        scoreBoard.findMatch("Poland").updateScore(2, 0)
+        scoreBoard.findMatch("Poland").updateScore(3, 0)
+        scoreBoard.findMatch("Poland").updateScore(4, 0)
+        scoreBoard.findMatch("Poland").updateScore(4, 1)
 
-        franceVsNorway.updateScore(1, 0)
-        franceVsNorway.updateScore(2, 0)
-        franceVsNorway.updateScore(2, 1)
+        scoreBoard.findMatch("France").updateScore(1, 0)
+        scoreBoard.findMatch("France").updateScore(2, 0)
+        scoreBoard.findMatch("France").updateScore(2, 1)
 
         then:
         "Get a summary of matches ordered by their total score. " +
