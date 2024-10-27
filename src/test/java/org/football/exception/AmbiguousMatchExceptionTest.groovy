@@ -23,6 +23,6 @@ class AmbiguousMatchExceptionTest extends Specification {
         def exception = new AmbiguousMatchException("Poland", matchesFound)
 
         then:
-        exception.message == "Multiple matches found. Matches: Poland vs Italy, Poland vs Germany"
+        exception.message == "Multiple matches found for team Poland. Matches: Poland vs Italy, Poland vs Germany"
     }
 }

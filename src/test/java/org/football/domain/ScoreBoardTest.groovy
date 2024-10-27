@@ -30,7 +30,7 @@ class ScoreBoardTest extends Specification {
         scoreBoard.getMatchesInProgress().size() == 1
     }
 
-    def "should throw exception when team is already in ongoing match"() {
+    def "should throw AmbiguousMatchException when team is already in ongoing match"() {
         given:
         def scoreBoard = new ScoreBoard(new ArrayList<>())
         scoreBoard.startNewMatch(polandVsGermany)
@@ -41,22 +41,22 @@ class ScoreBoardTest extends Specification {
 
         then:
         def exception = thrown(AmbiguousMatchException)
-        exception.message == "Multiple matches found. Matches: ${exceptionVariable}"
+        exception.message == "Multiple matches found for team ${exceptionVariable}"
 
         where:
         homeTeam               | awayTeam               | exceptionVariable
-        new Team("Poland", 0)  | new Team("France", 0)  | "Poland vs Germany"
-        new Team("Germany", 0) | new Team("France", 0)  | "Poland vs Germany"
-        new Team("France", 0)  | new Team("Germany", 0) | "Poland vs Germany"
-        new Team("France", 0)  | new Team("Poland", 0)  | "Poland vs Germany"
-        new Team("Italy", 0)   | new Team("France", 0)  | "Italy vs Spain"
-        new Team("France", 0)  | new Team("Italy", 0)   | "Italy vs Spain"
-        new Team("Spain", 0)   | new Team("France", 0)  | "Italy vs Spain"
-        new Team("France", 0)  | new Team("Spain", 0)   | "Italy vs Spain"
+        new Team("Poland", 0)  | new Team("France", 0)  | "Poland. Matches: Poland vs Germany"
+        new Team("Germany", 0) | new Team("France", 0)  | "Germany. Matches: Poland vs Germany"
+        new Team("France", 0)  | new Team("Germany", 0) | "Germany. Matches: Poland vs Germany"
+        new Team("France", 0)  | new Team("Poland", 0)  | "Poland. Matches: Poland vs Germany"
+        new Team("Italy", 0)   | new Team("France", 0)  | "Italy. Matches: Italy vs Spain"
+        new Team("France", 0)  | new Team("Italy", 0)   | "Italy. Matches: Italy vs Spain"
+        new Team("Spain", 0)   | new Team("France", 0)  | "Spain. Matches: Italy vs Spain"
+        new Team("France", 0)  | new Team("Spain", 0)   | "Spain. Matches: Italy vs Spain"
 
     }
 
-    def "should finish match and remove it from ongoing matches"() {
+    def "should finish match and remove it from score board"() {
         given:
         def scoreBoard = new ScoreBoard(new ArrayList<>())
 
@@ -72,7 +72,7 @@ class ScoreBoardTest extends Specification {
         scoreBoard.getMatchesInProgress().get(0).homeTeam.name == "Italy"
     }
 
-    def "should throw exception when trying to remove not existing match"() {
+    def "should throw MatchNotFoundException when trying to remove not existing match"() {
         given:
         def scoreBoard = new ScoreBoard(new ArrayList<>())
 
@@ -90,7 +90,7 @@ class ScoreBoardTest extends Specification {
         teamName << ["123", "Italy"]
     }
 
-    def "should find match by team name"() {
+    def "should find match by any team name"() {
         given:
         def scoreBoard = new ScoreBoard(new ArrayList<>())
         scoreBoard.startNewMatch(polandVsGermany)
@@ -114,7 +114,7 @@ class ScoreBoardTest extends Specification {
         "ITALY"      | italyVsSpain
     }
 
-    def "should throw exception when home team name is invalid or not found"() {
+    def "should throw exception when any team name is invalid or not found"() {
         given:
         def scoreBoard = new ScoreBoard(new ArrayList<>())
 
@@ -124,15 +124,11 @@ class ScoreBoardTest extends Specification {
         scoreBoard.findMatch(invalidName)
 
         then:
-        def actualException = thrown(expectedExceptionClass)
-        actualException.message == exceptionMessage
+        def actualException = thrown(IllegalArgumentException)
+        actualException.message == "Team name is required and cannot be null or blank"
 
         where:
-        invalidName | expectedExceptionClass   | exceptionMessage
-        ""          | IllegalArgumentException | "Team name cannot be null or blank"
-        "   "       | IllegalArgumentException | "Team name cannot be null or blank"
-        "       "   | IllegalArgumentException | "Team name cannot be null or blank"
-        null        | IllegalArgumentException | "Team name cannot be null or blank"
+        invalidName << ["", "  ", "     ", null]
     }
 
     def "should get a sorted summary of matches in progress"() {
