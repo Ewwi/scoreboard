@@ -17,3 +17,4 @@ The **Live Football World Cup Scoreboard** is a straightforward library designed
 ## Git Log
 
 To facilitate an easy review process, I have maintained a structured commit history with RED, GREEN, BLUE commits. This approach allows reviewers to track the progress of the work effectively, as opposed to squashing the commits.
+Under normal circumstances, I’d consolidate changes into one or two commits focused on the business logic, rather than detailing every step of the RED-GREEN-BLUE coding phases. This way, the git history remains concise and meaningful.
